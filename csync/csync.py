@@ -99,8 +99,6 @@ class ownCloudSync():
 		libVersion = csynclib.csync_version(0,40,1)
 		if DEBUG:
 			print 'libocsync version: ', libVersion
-		if libVersion not in ('0.70.4', '0.70.5','0.70.6','0.70.7'):
-			print 'This version of libocsync %s is not tested against ownCloud server 4.7.5.' % libVersion
 		c = csynclib.CSYNC()
 		self.ctx = ctypes.pointer(c)
 		self.buildURL()
@@ -197,9 +195,9 @@ def error(ctx, cmd, returnCode):
 	errNum = csynclib.csync_get_error(ctx)
 	errMsg = csynclib.csync_get_error_string(ctx)
 	if not errMsg:
-		if errNum == 20 and cmd == 'csync_update':
+		if errNum == 21 and cmd == 'csync_update':
 			errMsg = 'This is an authentication problem with the server, check user/pass.'
-		if errNum == 26 and cmd == 'csync_update':
+		if errNum == 27 and cmd == 'csync_update':
 			errMsg = 'This is a remote folder destination issue, check that the remote folder exists on ownCloud.'
 	print 'ERROR: %s exited %s, error %s: %s' % (
 		cmd,
@@ -261,7 +259,12 @@ def getConfig(parser):
 			if csynclib.csync_version(CSYNC_VERSION_INT(0,81,0)) is None:
 				cfg = dict(c.items('ownCloud'))
 			else:
-				cfg = dict(c.items('BWLimit') + c.items('ownCloud'))
+				if c.has_section('BWLimit'):
+					cfg = dict(c.items('BWLimit') + c.items('ownCloud'))
+				else:
+					if DEBUG:
+						print 'config file has no section [BWLimit]'
+					cfg = dict(c.items('ownCloud'))
 			if DEBUG:
 				print 'conifguration info received from %s:' % cfgFile
 				pcfg = copy.copy(cfg)

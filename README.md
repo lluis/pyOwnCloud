@@ -17,7 +17,6 @@ Requirements:
 -------------
 * The ocsync C library from ownCloud. If you install Mirall, you get it for free on Linux.
 	If you don't want to install mirall, you can install the 'ocsync' binary package from the owncloud repo's.
-        So far we have successfully tested against 0.70.4 and 0.70.5 of the libocsync library.
 * Python > 2.6 < 3 (patches welcome)
 * An ownCloud server to sync with. (Presumably you already have one of these.)
 * argparse for python (included with python > 2.6)
@@ -33,7 +32,9 @@ usage: just run oclient -h, and it will give you help.
     
     usage: oclient [-h] [-v] [-c [CONFIG]] [-u [USER]] [--ssl [SSLFINGERPRINT]]
                    [-p [PASS]] [--dry-run] [--debug] [-s [SRC]] [-d [DST]]
-                   [--url [URL]] [--use-keyring]
+                   [--url [URL]] [--use-keyring] 
+                   [--usedownloadlimit] [--downloadlimit [DOWNLOADLIMIT]]  
+                   [--useuploadlimit] [--uploadlimit [UPLOADLIMIT]]
     
     Synchronize files across machines using ownCloud DAV server.
     
@@ -57,11 +58,19 @@ usage: just run oclient -h, and it will give you help.
                           Folder on server.
     --url [URL]           URL to sync to.
     --use-keyring         use keyring if available to store password safely.
+    --usedownloadlimit    Use download limit.
+    --downloadlimit [DOWNLOADLIMIT]
+                          Download limit in KB/s.
+    --useuploadlimit      Use upload limit.
+    --uploadlimit [UPLOADLIMIT]
+                          Upload limit in KB/s.
 
     
     oclient supports the ownCloud config file, which is located here:
         $HOME/.local/share/data/ownCloud/owncloud.cfg
     oclient only supports the 'ownCloud' section of the config.
+    oclient support for download/upload limits requires libocsync version >= 0.81.0
+      these versions also support 'BWLimit' section of the config.
     oclient supports the following keys in the cfg  file:
     	user: username on the ownCloud server
     	pass: password on the ownCloud server
